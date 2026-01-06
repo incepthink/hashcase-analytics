@@ -1,0 +1,2 @@
+export const BACKEND_URL_AT = "https://api.aggtrade.xyz" // https://api.aggtrade.xyz || http://localhost:5000
+export const BACKEND_URL_HS = "https://api.hashcase.co" // https://api.hashcase.co || http://localhost:8000

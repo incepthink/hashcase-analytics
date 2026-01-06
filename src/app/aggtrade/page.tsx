@@ -1,17 +1,13 @@
-import Navbar from "@/components/common/Navbar";
 import SwapChart from "@/components/aggtrade/SwapChart";
-import UserLineChart from "@/components/home/UserLineChart";
 import { Container } from "@mui/material";
-import Image from "next/image";
-import UserPieChart from "@/components/home/UserPieChart";
 
-export default function Home() {
+export default function page() {
   return (
     <div className="min-h-screen">
       <Container className="pt-10" maxWidth="xl">
+        <h1 className="text-3xl font-semibold mb-14">Aggtrade</h1>
         <div className="flex flex-col gap-16">
-          <UserLineChart />
-          <UserPieChart />
+          <SwapChart />
         </div>
       </Container>
     </div>
