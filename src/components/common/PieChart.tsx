@@ -21,6 +21,8 @@ interface PieChartProps {
   isLoading?: boolean;
   centerLabel?: string;
   valuePrefix?: string;
+  layout?: "grid" | "list";
+  chartId?: string;
 }
 
 export default function CommonPieChart({
@@ -28,6 +30,8 @@ export default function CommonPieChart({
   isLoading = false,
   centerLabel = "Total Portfolio",
   valuePrefix = "$",
+  layout = "grid",
+  chartId = "default",
 }: PieChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
   const [isMobile, setIsMobile] = useState(false);
@@ -92,13 +96,13 @@ export default function CommonPieChart({
   return (
     <div
       className={`flex ${
-        isMobile ? "flex-col" : "flex-row"
-      } items-stretch w-full ${isMobile ? "gap-4" : "gap-5"}`}
+        isMobile ? "flex-col" : "flex-col lg:flex-row"
+      } items-stretch w-full ${isMobile ? "gap-6" : "gap-8"}`}
     >
       {/* Chart Container */}
       <div
         className={`relative ${
-          isMobile ? "w-full flex justify-center" : "inline-block"
+          isMobile ? "w-full flex justify-center" : "w-full lg:w-auto flex justify-center lg:justify-start"
         }`}
       >
         <ResponsiveContainer width={chartSize} height={chartSize}>
@@ -106,8 +110,8 @@ export default function CommonPieChart({
             <defs>
               {data.map((entry, index) => (
                 <linearGradient
-                  key={`gradient-${index}`}
-                  id={`gradient-${index}`}
+                  key={`gradient-${chartId}-${index}`}
+                  id={`gradient-${chartId}-${index}`}
                   x1="0%"
                   y1="0%"
                   x2="100%"
@@ -139,7 +143,7 @@ export default function CommonPieChart({
               {data.map((entry, i) => (
                 <Cell
                   key={i}
-                  fill={`url(#gradient-${i})`}
+                  fill={`url(#gradient-${chartId}-${i})`}
                   style={{
                     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                     cursor: "pointer",
@@ -151,7 +155,7 @@ export default function CommonPieChart({
               cursor={true}
               offset={-50}
               formatter={(value: number, name: string) => [
-                `${(value as number).toFixed(2)}`,
+                `${Math.floor(value as number).toLocaleString()}`,
                 name,
               ]}
               wrapperStyle={{
@@ -209,7 +213,7 @@ export default function CommonPieChart({
                   isMobile ? "text-xs" : "text-sm"
                 } text-gray-300 mt-1`}
               >
-                {valuePrefix}{data[activeIndex].value.toFixed(2)}
+                {valuePrefix}{Math.floor(data[activeIndex].value).toLocaleString()}
               </span>
             </>
           ) : (
@@ -226,7 +230,7 @@ export default function CommonPieChart({
                   isMobile ? "text-base" : "text-lg"
                 } font-semibold text-white mt-1`}
               >
-                {valuePrefix}{totalValue.toFixed(2)}
+                {valuePrefix}{Math.floor(totalValue).toLocaleString()}
               </span>
             </>
           )}
@@ -235,9 +239,15 @@ export default function CommonPieChart({
 
       {/* Legend Container */}
       <div
-        className={`flex ${
-          isMobile ? "flex-row flex-wrap gap-2" : "flex-1 flex-col"
-        } justify-between`}
+        className={`${
+          layout === "list"
+            ? isMobile
+              ? "flex flex-col gap-2"
+              : "flex-1 flex flex-col gap-3"
+            : isMobile
+            ? "grid grid-cols-2 gap-2"
+            : "flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3"
+        }`}
       >
         {data.map((dataItem: PieDataItem, i: number) => {
           const percentage =
@@ -249,13 +259,13 @@ export default function CommonPieChart({
               onMouseEnter={() => handleMouseEnter(null, i)}
               onMouseLeave={handleMouseLeave}
               className={`flex ${
-                isMobile
-                  ? "flex-1 min-w-[calc(50%-4px)] flex-col"
-                  : "flex-1 flex-row"
-              } justify-between items-center text-center ${
-                isMobile ? "text-sm" : "text-lg"
+                layout === "list" ? "flex-row" : "flex-col"
+              } justify-between ${
+                layout === "list" ? "items-center" : ""
+              } ${
+                isMobile ? "text-sm" : "text-base"
               } rounded-lg ${
-                isMobile ? "p-3" : "px-4 py-3"
+                isMobile ? "p-3" : layout === "list" ? "px-4 py-3" : "p-4"
               } cursor-pointer transition-all duration-300 ease-out ${
                 activeIndex === i
                   ? "bg-black/30 border-l-2 border-[#00FAFF] transform scale-[1.02] shadow-lg"
@@ -265,46 +275,95 @@ export default function CommonPieChart({
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
-              <div
-                className={`flex items-center ${
-                  isMobile ? "justify-center mb-2" : ""
-                } gap-3`}
-              >
-                <div
-                  style={{
-                    backgroundColor: dataItem.color,
-                    boxShadow:
-                      activeIndex === i ? `0 0 8px ${dataItem.color}` : "none",
-                  }}
-                  className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                    activeIndex === i ? "scale-125" : ""
-                  }`}
-                ></div>
-                <div className="flex flex-col items-start">
-                  <p
-                    className={`transition-colors duration-300 font-medium ${
-                      activeIndex === i ? "text-[#00FAFF]" : "text-white"
-                    } ${isMobile ? "text-sm" : "text-base"}`}
-                  >
-                    {dataItem.name}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {dataItem.balance.toFixed(4)} {dataItem.symbol}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p
-                  className={`transition-colors duration-300 font-medium ${
-                    activeIndex === i ? "text-[#00FAFF]" : "text-white"
-                  } ${isMobile ? "text-sm" : "text-base"}`}
-                >
-                  {valuePrefix}{dataItem.value.toFixed(2)}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {percentage.toFixed(1)}%
-                </p>
-              </div>
+              {layout === "list" ? (
+                // List layout (horizontal)
+                <>
+                  <div className="flex items-center gap-3">
+                    <div
+                      style={{
+                        backgroundColor: dataItem.color,
+                        boxShadow:
+                          activeIndex === i ? `0 0 8px ${dataItem.color}` : "none",
+                      }}
+                      className={`h-3 w-3 rounded-full transition-all duration-300 flex-shrink-0 ${
+                        activeIndex === i ? "scale-125" : ""
+                      }`}
+                    ></div>
+                    <div className="flex flex-col items-start">
+                      <p
+                        className={`transition-colors duration-300 font-medium ${
+                          activeIndex === i ? "text-[#00FAFF]" : "text-white"
+                        } ${isMobile ? "text-sm" : "text-base"}`}
+                      >
+                        {dataItem.name}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {Math.floor(dataItem.balance).toLocaleString()} {dataItem.symbol}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p
+                      className={`transition-colors duration-300 font-medium ${
+                        activeIndex === i ? "text-[#00FAFF]" : "text-white"
+                      } ${isMobile ? "text-sm" : "text-base"}`}
+                    >
+                      {valuePrefix}{Math.floor(dataItem.value).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {percentage.toFixed(1)}%
+                    </p>
+                  </div>
+                </>
+              ) : (
+                // Grid layout (vertical)
+                <>
+                  <div className="flex items-start gap-3 mb-3">
+                    <div
+                      style={{
+                        backgroundColor: dataItem.color,
+                        boxShadow:
+                          activeIndex === i ? `0 0 8px ${dataItem.color}` : "none",
+                      }}
+                      className={`h-3 w-3 rounded-full transition-all duration-300 flex-shrink-0 mt-1 ${
+                        activeIndex === i ? "scale-125" : ""
+                      }`}
+                    ></div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className={`transition-colors duration-300 font-medium truncate ${
+                          activeIndex === i ? "text-[#00FAFF]" : "text-white"
+                        } ${isMobile ? "text-sm" : "text-base"}`}
+                        title={dataItem.name}
+                      >
+                        {dataItem.name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Users</p>
+                      <p
+                        className={`transition-colors duration-300 font-semibold ${
+                          activeIndex === i ? "text-[#00FAFF]" : "text-white"
+                        } ${isMobile ? "text-sm" : "text-lg"}`}
+                      >
+                        {valuePrefix}{Math.floor(dataItem.value).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400 mb-1">Share</p>
+                      <p
+                        className={`transition-colors duration-300 font-semibold ${
+                          activeIndex === i ? "text-[#00FAFF]" : "text-white"
+                        } ${isMobile ? "text-sm" : "text-lg"}`}
+                      >
+                        {percentage.toFixed(1)}%
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           );
         })}

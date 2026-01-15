@@ -23,13 +23,19 @@ export function useUserChartData() {
       try {
         setLoading(true);
 
-        // Fetch data from both APIs in parallel
-        const [responseAT, responseHS] = await Promise.all([
+        // Fetch data from all APIs in parallel
+        const [responseAT, responseHS, responsePsycho, responseDiesel] = await Promise.all([
           axios.get<UserData[]>(
             `${BACKEND_URL_AT}/hashcase-analytics/chart/users`
           ),
           axios.get<UserData[]>(
             `${BACKEND_URL_HS}/hashcase-analytics/chart/users`
+          ),
+          axios.get<UserData[]>(
+            `${BACKEND_URL_HS}/hashcase-analytics/chart/psycho-users`
+          ),
+          axios.get<UserData[]>(
+            `${BACKEND_URL_HS}/hashcase-analytics/chart/fuel-users`
           ),
         ]);
 
@@ -43,6 +49,16 @@ export function useUserChartData() {
             data: responseHS.data,
             color: "#3B82F6",
             label: "Hashcase",
+          },
+          {
+            data: responsePsycho.data,
+            color: "#FF6B6B",
+            label: "Psycho",
+          },
+          {
+            data: responseDiesel.data,
+            color: "#4ECDC4",
+            label: "Diesel Dex",
           },
         ]);
         setLoading(false);

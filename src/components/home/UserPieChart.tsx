@@ -1,30 +1,34 @@
 "use client";
 
 import CommonPieChart, { PieDataItem } from "../common/PieChart";
-import { useUserChartData } from "@/hooks/useUserChartData";
+import { useCollectionsUsers } from "@/hooks/useCollectionsUsers";
+
+// Generate a color palette for the collections
+const generateColor = (index: number, total: number): string => {
+  const hue = (index * 360) / total;
+  return `hsl(${hue}, 70%, 60%)`;
+};
 
 export default function UserPieChart() {
-  const { chartDatasets, loading, error } = useUserChartData();
+  const { collections, loading, error } = useCollectionsUsers();
 
-  // Transform chart datasets into pie chart data using the final (latest) value
-  const pieChartData: PieDataItem[] = chartDatasets.map((dataset) => {
-    const finalValue =
-      dataset.data.length > 0
-        ? dataset.data[dataset.data.length - 1].totalUsers
-        : 0;
+  // Sort collections by total_users in descending order
+  const sortedCollections = [...collections].sort((a, b) => b.total_users - a.total_users);
 
+  // Transform collections into pie chart data
+  const pieChartData: PieDataItem[] = sortedCollections.map((collection, index) => {
     return {
-      name: dataset.label,
-      value: finalValue,
-      color: dataset.color,
-      balance: finalValue,
+      name: collection.name,
+      value: collection.total_users,
+      color: generateColor(index, sortedCollections.length),
+      balance: collection.total_users,
       symbol: "Users",
     };
   });
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">Users Distribution</h2>
+      <h2 className="text-2xl font-semibold mb-4">Users Distribution by Collection</h2>
       {loading && <p className="text-gray-500">Loading chart...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {!loading && !error && (
@@ -34,6 +38,7 @@ export default function UserPieChart() {
             isLoading={loading}
             centerLabel="Total Users"
             valuePrefix=""
+            chartId="collection-users"
           />
         </div>
       )}

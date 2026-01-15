@@ -4,6 +4,7 @@ import UserLineChart from "@/components/home/UserLineChart";
 import { Container } from "@mui/material";
 import Image from "next/image";
 import UserPieChart from "@/components/home/UserPieChart";
+import UserProjectPieChart from "@/components/home/UserProjectPieChart";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
         <div className="flex flex-col gap-16">
           <UserLineChart />
           <UserPieChart />
+          <UserProjectPieChart />
         </div>
       </Container>
     </div>
