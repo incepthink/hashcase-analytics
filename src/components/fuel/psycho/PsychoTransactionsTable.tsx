@@ -1,7 +1,10 @@
 "use client";
 
 import DisplayTable, { ColumnDef } from "@/components/common/DisplayTable";
-import { usePsychoTransactionsTable, PsychoTransaction } from "@/hooks/useFuelData";
+import {
+  usePsychoTransactionsTable,
+  PsychoTransaction,
+} from "@/hooks/useFuelData";
 
 const columns: ColumnDef<PsychoTransaction>[] = [
   {
@@ -47,32 +50,34 @@ const columns: ColumnDef<PsychoTransaction>[] = [
   {
     id: "swap_type",
     label: "Swap Type",
-    render: (row) => (
-      <span
-        className={`px-2 py-1 rounded text-xs font-medium ${
-          row.swap_type === "BUY"
-            ? "bg-green-500/20 text-green-400"
-            : "bg-red-500/20 text-red-400"
-        }`}
-      >
-        {row.swap_type}
-      </span>
-    ),
+    align: "center",
+    render: (row) =>
+      row.type === "SWAP" ? (
+        <span
+          className={`px-2 py-1 rounded text-xs font-medium ${
+            row.swap_type === "BUY"
+              ? "bg-green-500/20 text-green-400"
+              : "bg-red-500/20 text-red-400"
+          }`}
+        >
+          {row.swap_type}
+        </span>
+      ) : (
+        "-"
+      ),
   },
   {
     id: "pool_id",
     label: "Pool ID",
     render: (row) => (
-      <span className="font-mono text-sm">
-        {row.pool_id.slice(0, 8)}...
-      </span>
+      <span className="font-mono text-sm">{row.pool_id.slice(0, 8)}...</span>
     ),
   },
   {
     id: "amount",
     label: "Amount",
     align: "right",
-    render: (row) => row.amount,
+    render: (row) => row.amount.split(".")[0],
   },
   {
     id: "time",
@@ -82,8 +87,16 @@ const columns: ColumnDef<PsychoTransaction>[] = [
 ];
 
 export default function PsychoTransactionsTable() {
-  const { data, loading, error, page, setPage, rowsPerPage, setRowsPerPage, totalCount } =
-    usePsychoTransactionsTable();
+  const {
+    data,
+    loading,
+    error,
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    totalCount,
+  } = usePsychoTransactionsTable();
 
   return (
     <div>

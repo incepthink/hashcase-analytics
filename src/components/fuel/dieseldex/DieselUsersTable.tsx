@@ -12,6 +12,7 @@ const columns: ColumnDef<FuelUser>[] = [
   {
     id: "wallet_address",
     label: "Wallet Address",
+    align: "center",
     render: (row) => (
       <span className="font-mono text-sm">
         {row.wallet_address.slice(0, 8)}...{row.wallet_address.slice(-6)}
@@ -21,24 +22,33 @@ const columns: ColumnDef<FuelUser>[] = [
   {
     id: "transaction_count",
     label: "Transactions",
-    align: "right",
+    align: "center",
     render: (row) => row.transaction_count.toLocaleString(),
   },
   {
     id: "time",
     label: "Last Active",
+    align: "center",
     render: (row) => new Date(row.time).toLocaleString(),
   },
-  {
-    id: "createdAt",
-    label: "Created At",
-    render: (row) => new Date(row.createdAt).toLocaleString(),
-  },
+  // {
+  //   id: "createdAt",
+  //   label: "Created At",
+  //   render: (row) => new Date(row.createdAt).toLocaleString(),
+  // },
 ];
 
 export default function DieselUsersTable() {
-  const { data, loading, error, page, setPage, rowsPerPage, setRowsPerPage, totalCount } =
-    useFuelUsersTable();
+  const {
+    data,
+    loading,
+    error,
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    totalCount,
+  } = useFuelUsersTable();
 
   return (
     <div>

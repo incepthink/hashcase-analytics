@@ -1,7 +1,10 @@
 "use client";
 
 import DisplayTable, { ColumnDef } from "@/components/common/DisplayTable";
-import { useDieselTransactionsTable, DieselTransaction } from "@/hooks/useFuelData";
+import {
+  useDieselTransactionsTable,
+  DieselTransaction,
+} from "@/hooks/useFuelData";
 
 const columns: ColumnDef<DieselTransaction>[] = [
   {
@@ -44,28 +47,26 @@ const columns: ColumnDef<DieselTransaction>[] = [
       </span>
     ),
   },
-  {
-    id: "swap_type",
-    label: "Swap Type",
-    render: (row) => (
-      <span
-        className={`px-2 py-1 rounded text-xs font-medium ${
-          row.swap_type === "BUY"
-            ? "bg-green-500/20 text-green-400"
-            : "bg-red-500/20 text-red-400"
-        }`}
-      >
-        {row.swap_type}
-      </span>
-    ),
-  },
+  // {
+  //   id: "swap_type",
+  //   label: "Swap Type",
+  //   render: (row) => (
+  //     <span
+  //       className={`px-2 py-1 rounded text-xs font-medium ${
+  //         row.swap_type === "BUY"
+  //           ? "bg-green-500/20 text-green-400"
+  //           : "bg-red-500/20 text-red-400"
+  //       }`}
+  //     >
+  //       {row.swap_type}
+  //     </span>
+  //   ),
+  // },
   {
     id: "pool_id",
     label: "Pool ID",
     render: (row) => (
-      <span className="font-mono text-sm">
-        {row.pool_id.slice(0, 8)}...
-      </span>
+      <span className="font-mono text-sm">{row.pool_id.slice(0, 8)}...</span>
     ),
   },
   {
@@ -76,8 +77,16 @@ const columns: ColumnDef<DieselTransaction>[] = [
 ];
 
 export default function DieselTransactionsTable() {
-  const { data, loading, error, page, setPage, rowsPerPage, setRowsPerPage, totalCount } =
-    useDieselTransactionsTable();
+  const {
+    data,
+    loading,
+    error,
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    totalCount,
+  } = useDieselTransactionsTable();
 
   return (
     <div>
